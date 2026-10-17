@@ -53,7 +53,7 @@ export default function Hero() {
             Explore BGMI
           </Link>
           <Link 
-            href="/games/freefire" 
+            href="/games/free-fire" 
             className="px-5 py-2.5 bg-brand-deep text-white rounded-lg font-bold text-sm hover:bg-green-900 transition-all hover:-translate-y-0.5 shadow-md shadow-brand-deep/20 flex justify-center items-center"
           >
             Play FreeFire

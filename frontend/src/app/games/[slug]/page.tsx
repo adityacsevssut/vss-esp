@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TournamentCard from '@/components/tournaments/TournamentCard';
@@ -100,63 +101,76 @@ const tournamentsData: Record<string, {
   }
 };
 
+// Support both 'freefire' and 'free-fire' slugs
+tournamentsData['freefire'] = tournamentsData['free-fire'];
+
 export function generateStaticParams() {
   return Object.keys(tournamentsData).map((slug) => ({
     slug,
   }));
 }
 
-export default async function GameTournamentsPage({ params }: { params: Promise<{ slug: string }> }) {
+async function GameTournamentsContent({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
-  const gameData = tournamentsData[resolvedParams.slug];
+  const slug = resolvedParams?.slug?.toLowerCase();
+  const gameData = slug ? tournamentsData[slug] || tournamentsData[slug.replace(/_/g, '-')] : undefined;
 
   if (!gameData) {
     notFound();
   }
 
   return (
+    <section className="pt-8 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8 flex items-center justify-between gap-4">
+          <h2 className="text-2xl font-bold text-green-600 uppercase tracking-tight">
+            {gameData.name} Tournaments
+          </h2>
+          <span className="bg-brand-primary text-white text-sm font-bold px-3 py-1 rounded-full whitespace-nowrap shrink-0">
+            {gameData.tournaments.length} {gameData.tournaments.length === 1 ? 'Event' : 'Events'}
+          </span>
+        </div>
+
+        {gameData.tournaments.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {gameData.tournaments.map((tournament) => (
+              <TournamentCard 
+                key={tournament.id}
+                title={tournament.title}
+                image={tournament.image}
+                prizePool={tournament.prizePool}
+                format={tournament.format}
+                type={tournament.type}
+                slug={tournament.slug}
+                totalSlots={tournament.totalSlots}
+                remainingSlots={tournament.remainingSlots}
+                organizer={tournament.organizer}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
+            <p className="text-gray-500 text-lg font-medium">No active tournaments found for this game.</p>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+export default function GameTournamentsPage({ params }: { params: Promise<{ slug: string }> }) {
+  return (
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
       
       <main className="flex-grow">
-
-
-        {/* Tournaments List Section */}
-        <section className="pt-8 pb-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="mb-8 flex items-center justify-between gap-4">
-              <h2 className="text-2xl font-bold text-green-600 uppercase tracking-tight">
-                {gameData.name} Tournaments
-              </h2>
-              <span className="bg-brand-primary text-white text-sm font-bold px-3 py-1 rounded-full whitespace-nowrap shrink-0">
-                {gameData.tournaments.length} {gameData.tournaments.length === 1 ? 'Event' : 'Events'}
-              </span>
-            </div>
-
-            {gameData.tournaments.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {gameData.tournaments.map((tournament) => (
-                  <TournamentCard 
-                    key={tournament.id}
-                    title={tournament.title}
-                    image={tournament.image}
-                    prizePool={tournament.prizePool}
-                    format={tournament.format}
-                    type={tournament.type}
-                    slug={tournament.slug}
-                    totalSlots={tournament.totalSlots}
-                    remainingSlots={tournament.remainingSlots}
-                    organizer={tournament.organizer}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
-                <p className="text-gray-500 text-lg font-medium">No active tournaments found for this game.</p>
-              </div>
-            )}
+        <Suspense fallback={
+          <div className="max-w-7xl mx-auto px-4 py-20 text-center text-gray-500">
+            Loading tournaments...
           </div>
-        </section>
+        }>
+          <GameTournamentsContent params={params} />
+        </Suspense>
       </main>
 
       <Footer />

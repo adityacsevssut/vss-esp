@@ -1,0 +1,16 @@
+'use client';
+
+import { useSearchParams } from 'next/navigation';
+import AuthCard, { AuthRole } from '@/components/auth/AuthCard';
+
+export default function LoginClientSection() {
+  const searchParams = useSearchParams();
+  const roleParam = searchParams.get('role');
+  const role: AuthRole = roleParam === 'partner' ? 'partner' : 'player';
+
+  return (
+    <div className="w-full py-12 px-4 sm:px-6">
+      <AuthCard initialRole={role} />
+    </div>
+  );
+}
