@@ -120,13 +120,13 @@ async function GameTournamentsContent({ params }: { params: Promise<{ slug: stri
   }
 
   return (
-    <section className="pt-8 pb-16">
+    <section className="pt-6 sm:pt-8 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 flex items-center justify-between gap-4">
-          <h2 className="text-2xl font-bold text-green-600 uppercase tracking-tight">
+        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-green-600 uppercase tracking-tight">
             {gameData.name} Tournaments
           </h2>
-          <span className="bg-brand-primary text-white text-sm font-bold px-3 py-1 rounded-full whitespace-nowrap shrink-0">
+          <span className="bg-brand-primary text-white text-xs sm:text-sm font-bold px-3 py-1 rounded-full whitespace-nowrap shrink-0 w-fit">
             {gameData.tournaments.length} {gameData.tournaments.length === 1 ? 'Event' : 'Events'}
           </span>
         </div>

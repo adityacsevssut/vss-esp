@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} antialiased`}>
+    <html lang="en" className={`${inter.variable} antialiased scroll-smooth`}>
       <body className="min-h-screen bg-background text-text-main flex flex-col">
         {children}
       </body>

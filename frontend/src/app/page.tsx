@@ -14,7 +14,7 @@ export default function Home() {
         <Hero />
 
         {/* Featured Games Section */}
-        <section className="pt-8 pb-24 bg-white relative">
+        <section id="featured-games" className="pt-8 pb-24 bg-white relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="mb-6">
               <h2 className="text-xl sm:text-2xl font-bold text-brand-deep uppercase tracking-tight">Featured Games</h2>

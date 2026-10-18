@@ -9,7 +9,7 @@ export default function LoginClientSection() {
   const role: AuthRole = roleParam === 'partner' ? 'partner' : 'player';
 
   return (
-    <div className="w-full py-12 px-4 sm:px-6">
+    <div className="w-full">
       <AuthCard initialRole={role} />
     </div>
   );

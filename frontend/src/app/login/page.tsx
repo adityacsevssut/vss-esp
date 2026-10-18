@@ -17,7 +17,7 @@ export default function LoginPage() {
       />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-brand-primary/10 rounded-full blur-3xl pointer-events-none" />
 
-      <main className="flex-grow flex items-center justify-center">
+      <main className="flex-grow flex items-center justify-center py-6 sm:py-12 px-4 sm:px-6 relative z-10">
         <Suspense fallback={
           <div className="py-20 text-center text-text-secondary">
             <div className="inline-block w-8 h-8 border-3 border-brand-primary border-t-transparent rounded-full animate-spin mb-3" />

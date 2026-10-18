@@ -5,31 +5,32 @@ import { TypeAnimation } from 'react-type-animation';
 
 export default function Hero() {
   return (
-    <div className="relative w-full" style={{ height: '100vh' }}>
+    <div className="relative w-full bg-black overflow-hidden" style={{ height: '100vh' }}>
 
-      {/* ── VIDEO BACKGROUND ── */}
+      {/* ── HIGH-DEFINITION CINEMATIC VIDEO BACKGROUND ── */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
         autoPlay
         muted
         loop
         playsInline
+        preload="auto"
         poster="/images/esports_poster.jpg"
       >
         <source src="/videos/esports_hero.mp4" type="video/mp4" />
       </video>
 
       {/* ── OVERLAY ── */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/80" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/70 to-black/90 pointer-events-none" />
 
-      {/* ── HERO CONTENT — centered ── */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 sm:px-6 lg:px-8">
+      {/* ── HERO CONTENT — moved lower with top spacing ── */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20">
 
-        <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tighter mb-5 leading-none">
+        <h1 className="text-4xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tighter mb-4 sm:mb-5 leading-none">
           <span className="block drop-shadow-[0_2px_20px_rgba(0,0,0,0.8)]">
             <span className="text-white">VSSUT </span><span className="text-brand-primary">BURLA</span>
           </span>
-          <span className="block text-3xl sm:text-5xl lg:text-6xl mt-3 sm:mt-4 min-h-[1.2em]
+          <span className="block text-2xl sm:text-5xl lg:text-6xl mt-2 sm:mt-4 min-h-[1.2em]
                            bg-gradient-to-r from-amber-300 via-white to-amber-200
                            bg-clip-text text-transparent
                            drop-shadow-[0_0_24px_rgba(251,191,36,0.3)]">
@@ -46,9 +47,10 @@ export default function Hero() {
           </span>
         </h1>
 
-        <p className="text-white/70 text-sm sm:text-base max-w-xl mx-auto mb-10 leading-relaxed font-light tracking-wide">
-          The official esports community of Veer Surendra Sai University of Technology.
-          <br className="hidden sm:block" />
+        <p
+          className="text-white/90 font-medium max-w-full mx-auto mb-7 sm:mb-9 px-2 whitespace-nowrap tracking-tight sm:tracking-normal text-center"
+          style={{ fontSize: 'clamp(10.5px, 2.7vw, 18px)' }}
+        >
           Join the battle, compete with the best, and rise to glory.
         </p>
 
@@ -82,11 +84,15 @@ export default function Hero() {
       </div>
 
       {/* Scroll cue */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 text-white/40 animate-bounce">
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <a
+        href="#featured-games"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 text-white/50 hover:text-white transition-colors animate-bounce cursor-pointer p-2"
+        aria-label="Scroll to featured games"
+      >
+        <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
-      </div>
+      </a>
     </div>
   );
 }
