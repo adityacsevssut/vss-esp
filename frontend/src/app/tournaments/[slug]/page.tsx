@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import Footer from '@/components/layout/Footer';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import RegisterButton from '@/components/tournaments/RegisterButton';
 
 interface TournamentDetail {
   title: string;
@@ -241,12 +242,11 @@ async function TournamentDetailsContent({ params }: { params: Promise<{ slug: st
                 </div>
 
                 <div className="pt-6">
-                  <button className="w-full bg-white hover:bg-gray-50 text-green-600 hover:text-green-700 font-black py-4 px-6 rounded-full transition-all duration-300 border border-gray-300 hover:border-gray-400 shadow-sm hover:shadow-md hover:-translate-y-0.5 uppercase tracking-widest text-center">
-                    Register Now
-                  </button>
-                  <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-4">
-                    Hurry! Only {data.remainingSlots} slots left.
-                  </p>
+                  <RegisterButton
+                    tournamentTitle={data.title}
+                    entryFee={data.pricePerTeam}
+                    remainingSlots={data.remainingSlots}
+                  />
                 </div>
               </div>
             </div>
