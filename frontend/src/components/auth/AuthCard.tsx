@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Gamepad2, Handshake, Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Gamepad2, Handshake, Mail, Lock, Eye, EyeOff, User, CheckCircle2, ArrowRight, LogOut } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 export type AuthRole = 'player' | 'partner';
 export type AuthMode = 'login' | 'signup';
@@ -16,6 +18,9 @@ export default function AuthCard({
   initialRole = 'player',
   initialMode = 'login' 
 }: AuthCardProps) {
+  const router = useRouter();
+  const { user, login, logout } = useAuth();
+
   const [role, setRole] = useState<AuthRole>(initialRole);
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [name, setName] = useState('');
@@ -31,21 +36,66 @@ export default function AuthCard({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!identifier || !password) return;
-    if (isSignUp && !name) return;
-
     setIsLoading(true);
+
+    const trimmedIdent = identifier.trim();
+    const trimmedName = name.trim();
+
+    let resolvedName = '';
+    let resolvedEmail = '';
+
+    if (trimmedName) {
+      resolvedName = trimmedName;
+      resolvedEmail = trimmedIdent.includes('@')
+        ? trimmedIdent
+        : `${trimmedName.toLowerCase().replace(/[^a-z0-9]/g, '') || 'gamer'}@vssut.ac.in`;
+    } else if (trimmedIdent) {
+      if (trimmedIdent.includes('@')) {
+        const prefix = trimmedIdent.split('@')[0];
+        resolvedName = prefix.charAt(0).toUpperCase() + prefix.slice(1);
+        resolvedEmail = trimmedIdent;
+      } else {
+        resolvedName = trimmedIdent;
+        resolvedEmail = `${trimmedIdent.toLowerCase().replace(/[^a-z0-9]/g, '')}@vssut.ac.in`;
+      }
+    } else {
+      resolvedName = isPlayer ? 'ShadowHunter' : 'Nexus Partner Org';
+      resolvedEmail = isPlayer ? 'player@vssut.ac.in' : 'partner@vssut.ac.in';
+    }
+
+    // Call login with user data
+    login({
+      name: resolvedName,
+      email: resolvedEmail,
+      role: role,
+      inGameName: resolvedName,
+    });
+
+    setSuccessMessage(
+      isSignUp
+        ? `Welcome ${resolvedName}! Account created and logged in. Redirecting...`
+        : `Welcome back, ${resolvedName}! Logged in successfully. Redirecting...`
+    );
+
     setTimeout(() => {
       setIsLoading(false);
-      setSuccessMessage(isSignUp ? 'Account created successfully! Logging you in...' : 'Logged in successfully! Redirecting...');
+      router.push('/');
     }, 600);
   };
 
   const handleGoogleAuth = () => {
     setIsLoading(true);
+    const googleName = identifier.trim() || 'Google Competitor';
+    login({
+      name: googleName,
+      email: `${googleName.toLowerCase().replace(/[^a-z0-9]/g, '') || 'gamer'}@gmail.com`,
+      role: 'player',
+      inGameName: googleName,
+    });
+    setSuccessMessage(`Welcome, ${googleName}! Google authentication successful. Redirecting...`);
     setTimeout(() => {
       setIsLoading(false);
-      setSuccessMessage('Google authentication successful! Redirecting...');
+      router.push('/');
     }, 600);
   };
 
@@ -55,9 +105,6 @@ export default function AuthCard({
       setMode('login');
     }
     setSuccessMessage('');
-    setName('');
-    setIdentifier('');
-    setPassword('');
   };
 
   const handleModeToggle = (newMode: AuthMode) => {
@@ -104,9 +151,40 @@ export default function AuthCard({
             : (isSignUp ? 'Partner Registration' : 'Partner Login')}
         </h1>
 
+        {/* Existing Session Notice */}
+        {user && !successMessage && (
+          <div className="mb-6 p-4 rounded-xl bg-brand-light/70 border border-brand-border flex items-start gap-3">
+            <div className="w-9 h-9 rounded-full bg-brand-primary text-white flex items-center justify-center font-bold text-sm shrink-0">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-text-secondary">Currently logged in as:</p>
+              <p className="text-sm font-bold text-text-main truncate">{user.name}</p>
+              <p className="text-xs text-text-secondary truncate">{user.email}</p>
+              <div className="mt-2.5 flex items-center gap-2">
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-brand-primary hover:underline"
+                >
+                  Go to Home <ArrowRight className="w-3 h-3" />
+                </Link>
+                <span className="text-gray-300">•</span>
+                <button
+                  type="button"
+                  onClick={() => logout()}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-red-500 hover:text-red-700"
+                >
+                  <LogOut className="w-3 h-3" /> Log out
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {successMessage && (
-          <div className="mb-5 p-3 rounded-lg bg-brand-light text-brand-primary text-sm font-medium">
-            {successMessage}
+          <div className="mb-5 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-medium flex items-center gap-2 animate-in fade-in">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{successMessage}</span>
           </div>
         )}
 
@@ -115,38 +193,36 @@ export default function AuthCard({
           {isSignUp && (
             <div>
               <label className="block text-xs font-semibold text-text-main mb-1.5">
-                {isPlayer ? 'Full Name or In-Game Name' : 'Organization Name'}
+                {isPlayer ? 'Full Name' : 'Organization Name'}
               </label>
               <div className="relative">
                 <User className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
                 <input
                   type="text"
-                  required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder={isPlayer ? 'e.g. John Doe or ShadowNinja' : 'Company or Club Name'}
-                  className="w-full pl-10 pr-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-text-main placeholder-gray-400 focus:outline-none focus:border-brand-primary focus:bg-white"
+                  placeholder={isPlayer ? 'e.g. John Doe' : 'Company or Club Name'}
+                  className="w-full pl-10 pr-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-text-main placeholder-gray-400 focus:outline-none focus:border-brand-primary focus:bg-white transition-colors"
                 />
               </div>
             </div>
           )}
 
-          {/* Email / Username field */}
+          {/* Email field */}
           <div>
             <label className="block text-xs font-semibold text-text-main mb-1.5">
               {isSignUp 
                 ? 'Email Address' 
-                : (isPlayer ? 'Email or Username' : 'Organization Email')}
+                : (isPlayer ? 'Email' : 'Organization Email')}
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
               <input
-                type={isSignUp ? 'email' : (isPlayer ? 'text' : 'email')}
-                required
+                type="email"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                placeholder={isSignUp ? 'Enter your email' : (isPlayer ? 'Enter email or username' : 'Enter work email')}
-                className="w-full pl-10 pr-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-text-main placeholder-gray-400 focus:outline-none focus:border-brand-primary focus:bg-white"
+                placeholder={isSignUp ? 'Enter your email' : (isPlayer ? 'Enter email' : 'Enter work email')}
+                className="w-full pl-10 pr-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-text-main placeholder-gray-400 focus:outline-none focus:border-brand-primary focus:bg-white transition-colors"
               />
             </div>
           </div>
@@ -171,11 +247,10 @@ export default function AuthCard({
               <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5" />
               <input
                 type={showPassword ? 'text' : 'password'}
-                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={isSignUp ? 'Create a password' : 'Enter password'}
-                className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-text-main placeholder-gray-400 focus:outline-none focus:border-brand-primary focus:bg-white"
+                placeholder={isSignUp ? 'Create a password (any text)' : 'Enter password (any text)'}
+                className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-text-main placeholder-gray-400 focus:outline-none focus:border-brand-primary focus:bg-white transition-colors"
               />
               <button
                 type="button"
@@ -206,7 +281,7 @@ export default function AuthCard({
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2.5 px-4 bg-brand-primary hover:bg-brand-hover text-white rounded-lg font-semibold text-sm transition-colors cursor-pointer disabled:opacity-50 mt-2"
+            className="w-full py-2.5 px-4 bg-brand-primary hover:bg-brand-hover text-white rounded-lg font-semibold text-sm transition-colors cursor-pointer disabled:opacity-50 mt-2 shadow-sm shadow-brand-primary/20 active:scale-[0.99]"
           >
             {isLoading 
               ? (isSignUp ? 'Creating account...' : 'Signing in...') 
@@ -228,7 +303,7 @@ export default function AuthCard({
               <button
                 type="button"
                 onClick={handleGoogleAuth}
-                className="w-full py-2.5 px-4 border border-gray-200 hover:bg-gray-50 text-text-main rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2.5 cursor-pointer"
+                className="w-full py-2.5 px-4 border border-gray-200 hover:bg-gray-50 text-text-main rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2.5 cursor-pointer active:scale-[0.99]"
               >
                 <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
