@@ -241,9 +241,8 @@ async function TournamentDetailsContent({ params }: { params: Promise<{ slug: st
                 </div>
 
                 <div className="pt-6">
-                  <button className="w-full bg-green-600 hover:bg-green-500 text-white font-black py-4 px-6 rounded-xl transition-all duration-300 shadow-[0_4px_14px_0_rgba(22,163,74,0.39)] hover:shadow-[0_6px_20px_rgba(22,163,74,0.23)] hover:-translate-y-1 uppercase tracking-widest flex items-center justify-center gap-2 group">
+                  <button className="w-full bg-white hover:bg-gray-50 text-green-600 hover:text-green-700 font-black py-4 px-6 rounded-full transition-all duration-300 border border-gray-300 hover:border-gray-400 shadow-sm hover:shadow-md hover:-translate-y-0.5 uppercase tracking-widest text-center">
                     Register Now
-                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                   </button>
                   <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-4">
                     Hurry! Only {data.remainingSlots} slots left.

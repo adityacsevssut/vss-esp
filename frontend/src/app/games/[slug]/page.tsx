@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import Navbar from '@/components/layout/Navbar';
+import Link from 'next/link';
 import Footer from '@/components/layout/Footer';
 import TournamentCard from '@/components/tournaments/TournamentCard';
 import { notFound } from 'next/navigation';
@@ -122,6 +122,24 @@ async function GameTournamentsContent({ params }: { params: Promise<{ slug: stri
   return (
     <section className="pt-6 sm:pt-8 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Back to Home Button */}
+        <div className="mb-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 bg-white hover:bg-gray-50 text-gray-900 text-sm font-bold rounded-full transition-all border border-gray-300 hover:border-gray-400 shadow-sm group"
+          >
+            <svg
+              className="w-4 h-4 transition-transform group-hover:-translate-x-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span>BACK TO HOME</span>
+          </Link>
+        </div>
+
         <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <h2 className="text-xl sm:text-2xl font-bold text-green-600 uppercase tracking-tight">
             {gameData.name} Tournaments
@@ -161,8 +179,6 @@ async function GameTournamentsContent({ params }: { params: Promise<{ slug: stri
 export default function GameTournamentsPage({ params }: { params: Promise<{ slug: string }> }) {
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Navbar />
-      
       <main className="flex-grow">
         <Suspense fallback={
           <div className="max-w-7xl mx-auto px-4 py-20 text-center text-gray-500">

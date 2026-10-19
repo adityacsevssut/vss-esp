@@ -48,8 +48,8 @@ export default function Hero() {
         </h1>
 
         <p
-          className="text-white/90 font-medium max-w-full mx-auto mb-7 sm:mb-9 px-2 whitespace-nowrap tracking-tight sm:tracking-normal text-center"
-          style={{ fontSize: 'clamp(10.5px, 2.7vw, 18px)' }}
+          className="text-white/95 font-medium max-w-2xl mx-auto mb-7 sm:mb-9 px-4 whitespace-normal sm:whitespace-nowrap tracking-tight sm:tracking-normal text-center drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]"
+          style={{ fontSize: 'clamp(13.5px, 2.6vw, 21.5px)' }}
         >
           Join the battle, compete with the best, and rise to glory.
         </p>
