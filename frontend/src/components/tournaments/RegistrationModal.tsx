@@ -52,6 +52,7 @@ interface RegistrationModalProps {
   onClose: () => void;
   tournamentTitle: string;
   entryFee: string;
+  onSuccess?: () => void;
 }
 
 export default function RegistrationModal({
@@ -59,6 +60,7 @@ export default function RegistrationModal({
   onClose,
   tournamentTitle,
   entryFee,
+  onSuccess,
 }: RegistrationModalProps) {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<RegistrationData>({
@@ -630,7 +632,10 @@ export default function RegistrationModal({
 
               <button
                 type="button"
-                onClick={onClose}
+                onClick={() => {
+                  onSuccess?.();
+                  onClose();
+                }}
                 className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-md"
               >
                 Done

@@ -246,6 +246,7 @@ async function TournamentDetailsContent({ params }: { params: Promise<{ slug: st
                     tournamentTitle={data.title}
                     entryFee={data.pricePerTeam}
                     remainingSlots={data.remainingSlots}
+                    format={data.format}
                   />
                 </div>
               </div>
